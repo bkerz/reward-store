@@ -1,29 +1,46 @@
-import { Button, Container, Flex, Group, Stack, Text } from "@mantine/core"
-import { Fragment } from "react"
+import { Button, Container, Flex, Group, Modal, Stack, Text, TextInput } from "@mantine/core"
+import { Fragment, useEffect, useState } from "react"
+import { Octokit } from "octokit";
+import { useRewardStore } from "./store";
 
-interface Item {
-	id: string;
-}
+const octokit = new Octokit({
+	auth: 'token'
+})
 
-const rewards: Item[] = [
-	{ id: "elemento1" },
-	{ id: "elemento2" },
-	{ id: "elemento3" },
-	{ id: "elemento4" },
-	{ id: "elemento5" },
-	{ id: "elemento6" },
-	{ id: "elemento7" },
-	{ id: "elemento8" },
-	{ id: "elemento9" },
-];
 
 function App() {
+
+	const [userInfo, setUserInfo] = useState<UserInfo>({ username: "", token: "", project: "" })
+	const [openPopup, setOpenPopup] = useState(true)
+	const rewards = useRewardStore(state => state.rewards)
+
+	useEffect(() => {
+		console.log("initializing app")
+		const fetchData = async () => {
+			// Optional: Get & log the authenticated app's name
+			const res = await octokit.request('GET /repos/{owner}/{repo}/milestones', {
+				owner: 'bkerz',
+				repo: 'white-man-journy',
+				headers: {
+					'X-GitHub-Api-Version': '2022-11-28'
+				}
+			})
+
+			console.log(res)
+			console.log(rewards)
+			debugger
+
+		}
+		fetchData()
+		console.log("App initialized")
+
+	})
 
 	return (
 		<Container py="sm">
 			<Text align="center" size="2.5rem" weight="bold" my="lg">Your available rewards</Text>
 			<Flex wrap="wrap" gap="md" justify="center">
-				{rewards.map((item: { id: string }) => {
+				{rewards.map((item) => {
 					return (
 						<Fragment key={item.id}>
 							<Reward />
@@ -31,7 +48,7 @@ function App() {
 					)
 				})}
 			</Flex>
-
+			<UserInfoPopup open={openPopup} />
 		</Container>
 	)
 }
@@ -56,4 +73,22 @@ const Reward = () => {
 		</Group>
 	</Stack>)
 
+}
+
+interface UserInfo {
+	username: string;
+	token: string;
+	project: string
+}
+
+const UserInfoPopup = ({ open }: { open: boolean }) => {
+	return (
+		<Modal opened={open} onClose={() => console.log("hello")}>
+			<Stack>
+				<TextInput placeholder="Github username" />
+				<TextInput placeholder="Github Token API" />
+				<TextInput placeholder="Github project name" />
+			</Stack>
+		</Modal>
+	)
 }
