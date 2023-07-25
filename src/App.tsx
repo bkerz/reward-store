@@ -1,40 +1,36 @@
 import { Button, Container, Flex, Group, Modal, Stack, Text, TextInput } from "@mantine/core"
 import { Fragment, useEffect, useState } from "react"
 import { Octokit } from "octokit";
-import { useRewardStore } from "./store";
+import { useConfigsStore, useRewardStore } from "./store";
 
-const octokit = new Octokit({
-	auth: 'token'
-})
 
 
 function App() {
 
-	const [userInfo, setUserInfo] = useState<UserInfo>({ username: "", token: "", project: "" })
-	const [openPopup, setOpenPopup] = useState(true)
+	const username = useConfigsStore((state) => state.username)
+	const token = useConfigsStore((state) => state.token)
+	const project = useConfigsStore((state) => state.project)
 	const rewards = useRewardStore(state => state.rewards)
 
 	useEffect(() => {
-		console.log("initializing app")
 		const fetchData = async () => {
+			debugger
+			const octokit = new Octokit({
+				auth: token
+			})
 			// Optional: Get & log the authenticated app's name
 			const res = await octokit.request('GET /repos/{owner}/{repo}/milestones', {
-				owner: 'bkerz',
-				repo: 'white-man-journy',
+				owner: username,
+				repo: project,
 				headers: {
 					'X-GitHub-Api-Version': '2022-11-28'
 				}
 			})
 
-			console.log(res)
-			console.log(rewards)
-			debugger
-
 		}
 		fetchData()
-		console.log("App initialized")
 
-	})
+	}, [])
 
 	return (
 		<Container py="sm">
@@ -48,7 +44,6 @@ function App() {
 					)
 				})}
 			</Flex>
-			<UserInfoPopup open={openPopup} />
 		</Container>
 	)
 }
@@ -75,20 +70,3 @@ const Reward = () => {
 
 }
 
-interface UserInfo {
-	username: string;
-	token: string;
-	project: string
-}
-
-const UserInfoPopup = ({ open }: { open: boolean }) => {
-	return (
-		<Modal opened={open} onClose={() => console.log("hello")}>
-			<Stack>
-				<TextInput placeholder="Github username" />
-				<TextInput placeholder="Github Token API" />
-				<TextInput placeholder="Github project name" />
-			</Stack>
-		</Modal>
-	)
-}
