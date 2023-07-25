@@ -2,15 +2,19 @@ import { Button, Container, Flex, Group, Modal, Stack, Text, TextInput } from "@
 import { Fragment, useEffect, useState } from "react"
 import { Octokit } from "octokit";
 import { useConfigsStore, useRewardStore } from "./store";
+import CreateReward from "./CreateReward";
 
 
 
 function App() {
 
+	const [isModalOpened, setIsModalOpened] = useState(false)
+
 	const username = useConfigsStore((state) => state.username)
 	const token = useConfigsStore((state) => state.token)
 	const project = useConfigsStore((state) => state.project)
 	const rewards = useRewardStore(state => state.rewards)
+
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -36,14 +40,16 @@ function App() {
 		<Container py="sm">
 			<Text align="center" size="2.5rem" weight="bold" my="lg">Your available rewards</Text>
 			<Flex wrap="wrap" gap="md" justify="center">
-				{rewards.map((item) => {
+				{rewards.length > 0 ? rewards.map((item) => {
 					return (
 						<Fragment key={item.id}>
 							<Reward />
 						</Fragment>
 					)
-				})}
+				}) : <Text>You don't have any reward yet</Text>}
 			</Flex>
+			<Button sx={{ position: "absolute", bottom: "4rem", right: "4rem" }} onClick={() => { setIsModalOpened(true) }}>New Reward</Button>
+			<CreateReward opened={isModalOpened} onClose={() => { setIsModalOpened(false) }} />
 		</Container>
 	)
 }

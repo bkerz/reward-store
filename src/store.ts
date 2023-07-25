@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware';
 
-interface Reward {
+export interface Reward {
 	id: string;
 	title: string;
 	description: string;
@@ -9,7 +9,8 @@ interface Reward {
 }
 
 interface RewardState {
-	rewards: Reward[]
+	rewards: Reward[];
+	createReward: (reward: Reward) => void;
 }
 
 interface ConfigsState {
@@ -20,8 +21,9 @@ interface ConfigsState {
 }
 
 export const useRewardStore = create<RewardState>()(
-	(_: any) => ({
+	(set) => ({
 		rewards: [],
+		createReward: (reward: Reward) => set((state) => ({ rewards: [...state.rewards, reward] }))
 	})
 )
 
