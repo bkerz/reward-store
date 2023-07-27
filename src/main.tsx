@@ -6,14 +6,18 @@ import {
 } from "react-router-dom";
 import App from './App.tsx';
 import Settings from './settings/Settings.tsx';
+import Appbar from './Appbar.tsx';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
 	<React.StrictMode>
 		<MantineProvider withGlobalStyles withNormalizeCSS>
 			<BrowserRouter>
 				<Routes>
-					<Route path="/app" element={<App />} />
-					<Route path="/" element={<Settings />} />
+					<Route element={<Appbar />}>
+						<Route path="/" element={<App />} />
+						<Route path="/settings" element={<Settings />} />
+
+					</Route>
 				</Routes>
 			</BrowserRouter>
 		</MantineProvider>

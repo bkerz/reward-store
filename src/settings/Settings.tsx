@@ -1,7 +1,6 @@
 import { Button, Stack, TextInput } from "@mantine/core";
 import { useState } from "react";
 import { useConfigsStore } from "../store";
-import { useNavigate } from "react-router-dom";
 
 interface UserInfo {
 	username: string;
@@ -15,7 +14,6 @@ export default function Settings() {
 	const onChange = (field: keyof UserInfo) => (event: React.ChangeEvent<HTMLInputElement>) => {
 		setConfigs({ ...configs, [field]: event.target.value, })
 	}
-	const navigate = useNavigate()
 
 	return (
 		<Stack>
@@ -24,7 +22,6 @@ export default function Settings() {
 			<TextInput onChange={onChange("project")} placeholder="Github project name" />
 			<Button onClick={() => {
 				setGlobalConfigs(configs);
-				navigate("/app")
 			}}>Save configs</Button>
 		</Stack>
 	)
