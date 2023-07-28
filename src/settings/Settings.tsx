@@ -1,4 +1,4 @@
-import { Button, Stack, TextInput } from "@mantine/core";
+import { Text, Button, Stack, TextInput } from "@mantine/core";
 import { useState } from "react";
 import { useConfigsStore } from "../store";
 
@@ -17,6 +17,7 @@ export default function Settings() {
 
 	return (
 		<Stack>
+			<Text align="center" size="2.5rem" weight="bold" my="lg">Settings</Text>
 			<TextInput onChange={onChange("username")} placeholder="Github username" />
 			<TextInput onChange={onChange("token")} placeholder="Github Token API" />
 			<TextInput onChange={onChange("project")} placeholder="Github project name" />

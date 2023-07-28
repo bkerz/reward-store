@@ -20,6 +20,11 @@ interface ConfigsState {
 	setConfigs: (configs: Omit<ConfigsState, "setConfigs">) => void
 }
 
+interface PointsState {
+	points: number;
+	setPoints: (points: number) => void;
+}
+
 export const useRewardStore = create<RewardState>()(
 	(set) => ({
 		rewards: [],
@@ -35,3 +40,8 @@ export const useConfigsStore = create<ConfigsState>()(devtools((set) => ({
 		set(() => ({ username: configs.username, project: configs.project, token: configs.token }))
 	},
 })))
+
+export const usePointsStore = create<PointsState>()(set => ({
+	points: 0,
+	setPoints: (points: number) => set(() => ({ points: points })),
+}))

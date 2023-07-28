@@ -1,7 +1,7 @@
 import { Button, Container, Flex, Group, Modal, Stack, Text, TextInput } from "@mantine/core"
 import { Fragment, useEffect, useState } from "react"
 import { Octokit } from "octokit";
-import { useConfigsStore, useRewardStore } from "./store";
+import { useConfigsStore, usePointsStore, useRewardStore } from "./store";
 import CreateReward from "./CreateReward";
 
 
@@ -14,30 +14,46 @@ function App() {
 	const token = useConfigsStore((state) => state.token)
 	const project = useConfigsStore((state) => state.project)
 	const rewards = useRewardStore(state => state.rewards)
+	const { setPoints } = usePointsStore()
 
 
 	useEffect(() => {
+		const abortController = new AbortController()
 		const fetchData = async () => {
 			debugger
 			const octokit = new Octokit({
-				auth: token
+				auth: token,
+				request: {
+					signal: abortController.signal
+				}
 			})
 			// Optional: Get & log the authenticated app's name
-			const res = await octokit.request('GET /repos/{owner}/{repo}/milestones', {
+			const payload = {
 				owner: username,
 				repo: project,
 				headers: {
 					'X-GitHub-Api-Version': '2022-11-28'
 				}
-			})
-
+			}
+			const milestones = await octokit.request('GET /repos/{owner}/{repo}/milestones', payload)
+			const issues = await octokit.request('GET /repos/{owner}/{repo}/issues?state=closed', payload)
+			console.log({ milestones, issues })
+			debugger
+			if (Array.isArray(issues.data)) {
+				setPoints(issues.data.length)
+			}
 		}
-		fetchData()
+		if (username && token && project) {
+			fetchData()
+		}
+		return () => {
+			abortController.abort()
+		}
 
 	}, [])
 
 	return (
-		<Container py="sm">
+		<Fragment>
 			<Text align="center" size="2.5rem" weight="bold" my="lg">Your available rewards</Text>
 			<Flex wrap="wrap" gap="md" justify="center">
 				{rewards.length > 0 ? rewards.map((item) => {
@@ -50,7 +66,7 @@ function App() {
 			</Flex>
 			<Button sx={{ position: "absolute", bottom: "4rem", right: "4rem" }} onClick={() => { setIsModalOpened(true) }}>New Reward</Button>
 			<CreateReward opened={isModalOpened} onClose={() => { setIsModalOpened(false) }} />
-		</Container>
+		</Fragment>
 	)
 }
 
