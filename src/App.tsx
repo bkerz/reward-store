@@ -1,7 +1,7 @@
 import { Button, Container, Flex, Group, Modal, Stack, Text, TextInput } from "@mantine/core"
 import { Fragment, useEffect, useState } from "react"
 import { Octokit } from "octokit";
-import { useConfigsStore, usePointsStore, useRewardStore } from "./store";
+import { useConfigsStore, usePointsStore, useRewardStore, Reward as RewardType } from "./store";
 import CreateReward from "./CreateReward";
 
 
@@ -59,7 +59,7 @@ function App() {
 				{rewards.length > 0 ? rewards.map((item) => {
 					return (
 						<Fragment key={item.id}>
-							<Reward />
+							<Reward {...item} />
 						</Fragment>
 					)
 				}) : <Text>You don't have any reward yet</Text>}
@@ -72,20 +72,21 @@ function App() {
 
 export default App
 
-const Reward = () => {
+interface RewardProps extends Omit<RewardType, "id"> { }
+const Reward = ({ title, description, cost }: RewardProps) => {
 	return (<Stack spacing=".25rem" sx={{
 		padding: ".75rem 1.25rem",
 		border: "2px solid lightgray",
 		borderRadius: ".5rem"
 	}}>
 		<Text size="2rem" weight="bold">
-			Testing title
+			{title}
 		</Text>
 		<Text>
-			Testing description
+			{description}
 		</Text>
 		<Group position="apart" my="1rem">
-			<Text>Cost: $10</Text>
+			<Text>Cost: {cost}</Text>
 			<Button>Buy</Button>
 		</Group>
 	</Stack>)

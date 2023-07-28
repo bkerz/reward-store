@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { devtools } from 'zustand/middleware';
+import { devtools, subscribeWithSelector } from 'zustand/middleware';
 
 export interface Reward {
 	id: string;
@@ -25,12 +25,16 @@ interface PointsState {
 	setPoints: (points: number) => void;
 }
 
+const localRewards = localStorage.getItem("rewards")
+
+const initialRewards: Reward[] = localRewards ? JSON.parse(localRewards) : []
+
 export const useRewardStore = create<RewardState>()(
-	(set) => ({
-		rewards: [],
+	subscribeWithSelector((set) => ({
+		rewards: initialRewards,
 		createReward: (reward: Reward) => set((state) => ({ rewards: [...state.rewards, reward] }))
 	})
-)
+	))
 
 export const useConfigsStore = create<ConfigsState>()(devtools((set) => ({
 	username: "",
@@ -45,3 +49,7 @@ export const usePointsStore = create<PointsState>()(set => ({
 	points: 0,
 	setPoints: (points: number) => set(() => ({ points: points })),
 }))
+
+useRewardStore.subscribe((state) => state.rewards, (rewards) => {
+	localStorage.setItem("rewards", JSON.stringify(rewards))
+})

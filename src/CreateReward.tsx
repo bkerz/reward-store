@@ -1,6 +1,6 @@
 import { Modal, Text, TextInput, Stack, Group, Button } from "@mantine/core"
 import { useRewardStore, Reward } from "./store";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface Props {
 	opened: boolean;
@@ -19,8 +19,13 @@ export default function CreateReward({ opened, onClose }: Props) {
 	const onCostChange = (e: React.ChangeEvent<HTMLInputElement>) => setCost(parseInt(e.target.value))
 	const onDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => setDescription(e.target.value)
 
+	useEffect(() => {
+		console.log({ title, description, cost })
+	})
+
 
 	const onCreate = () => {
+		debugger
 		createReward({
 			id: crypto.randomUUID(),
 			title,
