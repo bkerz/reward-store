@@ -1,6 +1,10 @@
 import { AppShell, Container, createStyles, Navbar, NavLink } from "@mantine/core"
-import { NavLink as Link, Outlet } from "react-router-dom"
+import Link from "next/link";
 import Points from "./Points";
+
+interface Props {
+	children: React.ReactNode
+}
 
 const useStyles = createStyles(() => (
 	{
@@ -17,7 +21,7 @@ const useStyles = createStyles(() => (
 	}
 ))
 
-export default function Appbar() {
+export default function Appbar({ children }: Props) {
 	const { classes } = useStyles()
 	return (
 		<AppShell
@@ -28,17 +32,14 @@ export default function Appbar() {
 						<Points />
 					</Navbar.Section>
 					<Navbar.Section>
-						<Link to="/" className={classes.noUnderline}>
+						<Link href="/" className={classes.noUnderline}>
 							<NavLink className={classes.linkWrapper} label="Rewards" />
-						</Link>
-						<Link to="/settings" className={classes.noUnderline}>
-							<NavLink className={classes.linkWrapper} label="Settings" />
 						</Link>
 					</Navbar.Section>
 				</Navbar>}
 		>
 			<Container>
-				<Outlet />
+				{children}
 
 			</Container>
 		</AppShell>

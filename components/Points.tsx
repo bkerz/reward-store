@@ -1,5 +1,5 @@
-import { Group, Text, useInputProps } from "@mantine/core";
-import { usePointsStore } from "./store";
+import { Group, Text } from "@mantine/core";
+import { usePointsStore } from "../store";
 
 export default function Points() {
 	const points = usePointsStore(state => state.points)

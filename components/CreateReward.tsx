@@ -1,5 +1,5 @@
 import { Modal, Text, TextInput, Stack, Group, Button } from "@mantine/core"
-import { useRewardStore, Reward } from "./store";
+import { useRewardStore, Reward } from "../store";
 import { useEffect, useState } from "react";
 
 interface Props {

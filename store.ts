@@ -1,3 +1,4 @@
+import { Session } from '@supabase/supabase-js';
 import { create } from 'zustand'
 import { devtools, subscribeWithSelector } from 'zustand/middleware';
 
@@ -11,6 +12,7 @@ export interface Reward {
 interface RewardState {
 	rewards: Reward[];
 	createReward: (reward: Reward) => void;
+	initRewards: (reward: Reward[]) => void;
 }
 
 interface ConfigsState {
@@ -25,13 +27,11 @@ interface PointsState {
 	setPoints: (points: number) => void;
 }
 
-const localRewards = localStorage.getItem("rewards")
-
-const initialRewards: Reward[] = localRewards ? JSON.parse(localRewards) : []
 
 export const useRewardStore = create<RewardState>()(
 	subscribeWithSelector((set) => ({
-		rewards: initialRewards,
+		rewards: [],
+		initRewards: (rewards: Reward[]) => set(() => ({ rewards: rewards })),
 		createReward: (reward: Reward) => set((state) => ({ rewards: [...state.rewards, reward] }))
 	})
 	))
@@ -53,3 +53,13 @@ export const usePointsStore = create<PointsState>()(set => ({
 useRewardStore.subscribe((state) => state.rewards, (rewards) => {
 	localStorage.setItem("rewards", JSON.stringify(rewards))
 })
+
+interface SessionState {
+	session: Session | null;
+	setSession: (session: Session | null) => void
+}
+
+export const useSessionStore = create<SessionState>()((set) => ({
+	session: null,
+	setSession: (session: Session | null) => set(() => ({ session: session }))
+}))
