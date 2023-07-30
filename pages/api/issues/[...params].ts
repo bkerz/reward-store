@@ -17,7 +17,7 @@ export default async function handler(req: any, res: any) {
 					'X-GitHub-Api-Version': '2022-11-28'
 				}
 			}
-			const data = await octokit.request("GET /repos/{owner}/{repo}/issues?state=closed", payload)
+			const data = await octokit.request("GET /repos/{owner}/{repo}/issues?state=closed&labels=reward-points", payload)
 
 			if (data) {
 				res.status(200).json(data)

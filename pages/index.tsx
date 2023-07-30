@@ -1,18 +1,22 @@
 import { Button, Flex, Group, Stack, Text } from "@mantine/core"
 import { Fragment, useEffect, useState } from "react"
 import { OAuthApp as GithubApp } from "octokit";
-import { usePointsStore, useRewardStore, Reward as RewardType, useSessionStore } from "../store";
-import CreateReward from "../components/CreateReward";
-import { supabase } from "../client"
+import { usePointsStore, useRewardStore, Reward as RewardType, useSessionStore } from "../src/store";
+import CreateReward from "../src/components/CreateReward";
+import { supabase } from "../src/client"
 import { Session } from "@supabase/supabase-js";
+import { useLocalStorage } from "../src/hooks";
 
 function App() {
 
 	const [isModalOpened, setIsModalOpened] = useState(false)
 
-	const { rewards, initRewards } = useRewardStore()
+	const { rewards } = useRewardStore()
 	const { setPoints } = usePointsStore()
 	const { session } = useSessionStore()
+
+	const [localRewards] = useLocalStorage<RewardType[]>("rewards", [])
+	const [localPoints] = useLocalStorage<number>("points", 0)
 
 
 	const singInUser = async () => {
@@ -23,12 +27,18 @@ function App() {
 		await supabase.auth.signOut()
 	}
 
+	const initializePoints = () => {
+		return usePointsStore.setState(() => ({ points: localPoints }))
+	}
+
+	const initializeRewards = () => {
+		return useRewardStore.setState(() => ({ rewards: localRewards }))
+
+	}
+
 	useEffect(() => {
-		const localRewards = localStorage.getItem("rewards")
-		if (localRewards) {
-			initRewards(Array.isArray(JSON.parse(localRewards)) ? JSON.parse(localRewards) : [])
-		}
 		const abortController = new AbortController()
+		//initializePoints()
 		fetch(`/api/issues/${"bkerz"}/${"reward-store"}`, { signal: abortController.signal }).then(res =>
 			res.json()
 		).then(res => {
@@ -41,6 +51,11 @@ function App() {
 		}
 
 	}, [])
+
+	useEffect(() => {
+		initializeRewards()
+		initializePoints()
+	}, [localRewards, localPoints])
 
 	return (
 		<Fragment>
@@ -101,7 +116,7 @@ const Reward = ({ title, description, cost }: RewardProps) => {
 		</Text>
 		<Group position="apart" my="1rem">
 			<Text>Cost: {cost}</Text>
-			<Button onClick={buyReward}>Buy</Button>
+			<Button disabled={points < cost} onClick={buyReward}>Buy</Button>
 		</Group>
 	</Stack>)
 
