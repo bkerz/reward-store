@@ -7,24 +7,27 @@ const { octokit } = new OAuthApp({
 })
 
 export default async function handler(req: any, res: any) {
-	const { params } = req.query
+	const { user } = req.query
 	try {
 		if (req.method === 'GET') {
 			const payload = {
-				owner: params[0],
-				repo: params[1],
+				username: user,
 				headers: {
 					'X-GitHub-Api-Version': '2022-11-28'
 				}
 			}
-			const data = await octokit.request("GET /repos/{owner}/{repo}/issues?state=closed&labels=reward-points", payload)
-
-			if (data) {
-				res.status(200).json(data)
+			if (user) {
+				const data = await octokit.request("GET /users/{username}/repos?sort=created", payload)
+				if (data) {
+					res.status(200).json(data)
+				} else {
+					res.status(200).json({ data: [{ id: "1", name: "user wasn't defined" }] })
+				}
 			}
 		}
 	}
 	catch (e) {
-		return res.status(404).json({ error: e })
+		return res.status(500).json({ error: e })
 	}
 }
+

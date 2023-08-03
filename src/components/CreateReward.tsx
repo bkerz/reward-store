@@ -2,6 +2,7 @@ import { Modal, Text, TextInput, Stack, Group, Button } from "@mantine/core"
 import { useRewardStore, Reward } from "../store";
 import { useEffect, useState } from "react";
 import { useLocalStorage } from "../hooks";
+import { useRouter } from "next/router";
 
 interface Props {
 	opened: boolean;
@@ -14,6 +15,7 @@ export default function CreateReward({ opened, onClose }: Props) {
 	const [description, setDescription] = useState("")
 	const [cost, setCost] = useState(0)
 	const [localRewards, setLocalRewards] = useLocalStorage<Reward[]>("rewards", [])
+	const router = useRouter()
 
 	const createReward = useRewardStore(state => state.createReward)
 
@@ -27,7 +29,8 @@ export default function CreateReward({ opened, onClose }: Props) {
 			id: crypto.randomUUID(),
 			title,
 			description,
-			cost
+			cost,
+			project: router.query.project
 		})
 		const { rewards } = useRewardStore.getState()
 		setLocalRewards(rewards)

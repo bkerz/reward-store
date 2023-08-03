@@ -1,5 +1,4 @@
 import { Session } from '@supabase/supabase-js';
-import { parse } from 'path';
 import { create } from 'zustand'
 import { devtools, subscribeWithSelector } from 'zustand/middleware';
 
@@ -8,6 +7,7 @@ export interface Reward {
 	title: string;
 	description: string;
 	cost: number;
+	project: string;
 }
 
 interface RewardState {
@@ -60,4 +60,16 @@ interface SessionState {
 export const useSessionStore = create<SessionState>()((set) => ({
 	session: null,
 	setSession: (session: Session | null) => set(() => ({ session: session }))
+}))
+
+export interface Project {
+	id: string;
+	name: string;
+}
+interface ProjectState {
+	projects: Project[];
+}
+
+export const useProjectStore = create<ProjectState>()((set) => ({
+	projects: []
 }))
