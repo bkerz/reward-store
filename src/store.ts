@@ -70,6 +70,6 @@ interface ProjectState {
 	projects: Project[];
 }
 
-export const useProjectStore = create<ProjectState>()((set) => ({
+export const useProjectStore = create<ProjectState>()(() => ({
 	projects: []
 }))

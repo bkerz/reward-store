@@ -4,7 +4,6 @@ import { OAuthApp as GithubApp } from "octokit";
 import { usePointsStore, useRewardStore, Reward as RewardType, useSessionStore } from "../store"
 import CreateReward from "./CreateReward";
 import { supabase } from "../client"
-import { Session } from "@supabase/supabase-js";
 
 function App() {
 
@@ -26,7 +25,6 @@ function App() {
 	useEffect(() => {
 		const session_string = localStorage.getItem("session_data")
 		if (session_string) {
-			const { access_token }: Session = session ? session : JSON.parse(session_string)
 			const abortController = new AbortController()
 			const fetchData = async () => {
 				const { octokit } = new GithubApp({
@@ -42,10 +40,7 @@ function App() {
 						'X-GitHub-Api-Version': '2022-11-28'
 					}
 				}
-				const milestones = await octokit.request('GET /repos/{owner}/{repo}/milestones', payload)
 				const issues = await octokit.request('GET /repos/{owner}/{repo}/issues?state=closed', payload)
-				console.log({ milestones, issues })
-				debugger
 				if (Array.isArray(issues.data)) {
 					setPoints(issues.data.length)
 				}
@@ -96,7 +91,7 @@ function App() {
 
 export default App
 
-interface RewardProps extends Omit<RewardType, "id"> { }
+type RewardProps = Omit<RewardType, "id">
 const Reward = ({ title, description, cost }: RewardProps) => {
 	return (<Stack spacing=".25rem" sx={{
 		padding: ".75rem 1.25rem",

@@ -23,7 +23,6 @@ export default function ProjectRewards() {
 
 	useEffect(() => {
 		const abortController = new AbortController()
-		//initializePoints()
 		fetch(`/api/issues/${"bkerz"}/${router.query.project}`, { signal: abortController.signal }).then(res =>
 			res.json()
 		).then(res => {
@@ -51,7 +50,7 @@ export default function ProjectRewards() {
 
 	)
 }
-interface RewardProps extends Omit<RewardType, "id"> { }
+type RewardProps = Omit<RewardType, "id">
 const Reward = ({ title, description, cost }: RewardProps) => {
 	const { points, setPoints } = usePointsStore()
 

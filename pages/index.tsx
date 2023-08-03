@@ -1,17 +1,11 @@
-import { Modal, TextInput, Button, Flex, Group, Stack, Text, UnstyledButton, createStyles } from "@mantine/core"
-import { Fragment, useEffect, useState } from "react"
-import { OAuthApp as GithubApp } from "octokit";
-import { usePointsStore, useRewardStore, useSessionStore, Reward as RewardType } from "../src/store";
-import CreateReward from "../src/components/CreateReward";
+import { Button, Text } from "@mantine/core"
+import { Fragment } from "react"
+import { useSessionStore } from "../src/store";
 import { supabase } from "../src/client"
-import { Session } from "@supabase/supabase-js";
-import { useLocalStorage } from "../src/hooks";
 import ProjectList from "../src/components/ProjectList";
 
 
 function App() {
-
-	const [isModalOpened, setIsModalOpened] = useState(false)
 
 	const { session } = useSessionStore()
 

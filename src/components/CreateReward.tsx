@@ -14,7 +14,7 @@ export default function CreateReward({ opened, onClose }: Props) {
 	const [title, setTitle] = useState("")
 	const [description, setDescription] = useState("")
 	const [cost, setCost] = useState(0)
-	const [localRewards, setLocalRewards] = useLocalStorage<Reward[]>("rewards", [])
+	const [, setLocalRewards] = useLocalStorage<Reward[]>("rewards", [])
 	const router = useRouter()
 
 	const createReward = useRewardStore(state => state.createReward)
@@ -25,12 +25,13 @@ export default function CreateReward({ opened, onClose }: Props) {
 
 
 	const onCreate = () => {
+		const project = Array.isArray(router.query.project) ? router.query.project[0] : router.query.project
 		createReward({
 			id: crypto.randomUUID(),
 			title,
 			description,
 			cost,
-			project: router.query.project
+			project: project ? project : ""
 		})
 		const { rewards } = useRewardStore.getState()
 		setLocalRewards(rewards)

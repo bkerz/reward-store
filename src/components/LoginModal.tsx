@@ -1,5 +1,5 @@
 import { Button, Modal, Text } from "@mantine/core";
-import { supabase } from "./client";
+import { supabase } from "../client";
 
 interface Props {
 	opened: boolean;
